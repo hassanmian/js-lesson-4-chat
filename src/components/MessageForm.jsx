@@ -12,9 +12,9 @@ export default function MessageForm({handlePostMessage}) {
     return (
         <div className="form">
             <div class="form-group mb-2">
-                <input ref={messageInputField} type="text" readonly class="form-control" placeholder="Enter message..." />
+                <input ref={messageInputField} type="text" readonly className="form-control" placeholder="Enter message..." />
             </div>
-            <button onClick={handleOnClick} class="btn btn-primary btn-block mb-2">Send Message</button>
+            <button onClick={handleOnClick} className="btn btn-primary btn-block mb-2">Send Message</button>
         </div>
     )
 }
