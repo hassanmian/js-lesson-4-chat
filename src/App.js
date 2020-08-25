@@ -2,12 +2,16 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
 
 import { useEffect, useState, useRef } from 'react'
+import MessageForm from './components/MessageForm';
+import MessageList from './components/MessageList';
+import Heading1 from './components/Heading1';
 
 function App() {
   const CHAT_ROOM_URL = "https://mock-data-api.firebaseio.com/chatrooms/-MFZumveIpHH5D_gkUHJ.json"
   const MESSAGE_LIST_URL = "https://mock-data-api.firebaseio.com/chatrooms/-MFZumveIpHH5D_gkUHJ/messages.json"
   let [chatRoom, setChatRoom] = useState({})
-  const messageInputField = useRef()
+  let [username, setUserName] = useState(null)
+  const usernameInput = useRef()
 
   function handleGetChatRoom() {
     const url = CHAT_ROOM_URL
@@ -16,10 +20,11 @@ function App() {
       .then(data => setChatRoom(data))
   }
 
-  function handlePostMessage() {
+  function handlePostMessage(message) {
     const url = MESSAGE_LIST_URL
     const data = {
-      message: messageInputField.current.value
+      message: message,
+      username: username,
     }
     fetch(url, {
       method: 'POST',
@@ -32,26 +37,43 @@ function App() {
 
   }
 
-  useEffect( () => {
+  useEffect(() => {
     handleGetChatRoom()
   }, [])
 
-  return (
-    <div>
-      <h1>{chatRoom.name}</h1>
+  function renderChatRoom() {
+    return (
       <div>
-        <input ref={messageInputField} type="text" />
-        <button onClick={handlePostMessage}>Send Message</button>
+        <Heading1 heading={chatRoom.name} />
+        <p>Your username is {username}</p>
+        <MessageForm handlePostMessage={handlePostMessage} />
+        {chatRoom.messages && <MessageList messages={chatRoom.messages} />}
+
+      </div >
+    )
+  }
+
+  function renderUsernameForm() {
+    return (
+      <div>
+        <p>Please enter username</p>
+        <input ref={usernameInput} type="text" />
+        <button onClick={() => setUserName(usernameInput.current.value)}>Save username</button>
       </div>
-      <ul>
-        {chatRoom.messages && Object.entries(chatRoom.messages).reverse().map(item => {
-          const key = item[0]
-          const payload = item[1]
-          return <li key={key}>{payload.message}</li>
-        })}
-      </ul>
-      
+    )
+  }
+
+  return (
+    <div className="container">
+      <div className="row">
+        <div className="col-md-6 offset-md-3">
+          {username ? renderChatRoom() : renderUsernameForm()}
+        </div>
+
+      </div>
     </div>
+
+
   );
 }
 
