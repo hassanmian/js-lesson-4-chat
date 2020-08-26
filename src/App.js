@@ -5,13 +5,17 @@ import { useEffect, useState, useRef } from 'react'
 import MessageForm from './components/MessageForm';
 import MessageList from './components/MessageList';
 import Heading1 from './components/Heading1';
+import { UserContext } from './contexts/UserContext';
+import { ChatRoomContext } from './contexts/ChatRoomContext';
 
 function App() {
   const CHAT_ROOM_URL = "https://mock-data-api.firebaseio.com/chatrooms/-MFZumveIpHH5D_gkUHJ.json"
   const MESSAGE_LIST_URL = "https://mock-data-api.firebaseio.com/chatrooms/-MFZumveIpHH5D_gkUHJ/messages.json"
-  let [chatRoom, setChatRoom] = useState({})
-  let [username, setUserName] = useState(null)
   const usernameInput = useRef()
+  
+  let [chatRoom, setChatRoom] = useState({})
+  const [user, setUser] = useState(null)
+  
 
   function handleGetChatRoom() {
     const url = CHAT_ROOM_URL
@@ -24,7 +28,7 @@ function App() {
     const url = MESSAGE_LIST_URL
     const data = {
       message: message,
-      username: username,
+      username: user,
     }
     fetch(url, {
       method: 'POST',
@@ -45,9 +49,9 @@ function App() {
     return (
       <div>
         <Heading1 heading={chatRoom.name} />
-        <p>Your username is {username}</p>
+        <p>Your username is {user}</p>
         <MessageForm handlePostMessage={handlePostMessage} />
-        {chatRoom.messages && <MessageList messages={chatRoom.messages} />}
+        {chatRoom.messages && <MessageList />}
 
       </div >
     )
@@ -58,20 +62,24 @@ function App() {
       <div>
         <p>Please enter username</p>
         <input ref={usernameInput} type="text" />
-        <button onClick={() => setUserName(usernameInput.current.value)}>Save username</button>
+        <button onClick={() => setUser(usernameInput.current.value)}>Save username</button>
       </div>
     )
   }
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-6 offset-md-3">
-          {username ? renderChatRoom() : renderUsernameForm()}
-        </div>
+    <ChatRoomContext.Provider value={{chatRoom, setChatRoom}}>
+      <UserContext.Provider value={{user, setUser}}>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-6 offset-md-3">
+            {user ? renderChatRoom() : renderUsernameForm()}
+          </div>
 
+        </div>
       </div>
-    </div>
+      </UserContext.Provider>
+    </ChatRoomContext.Provider>
 
 
   );
