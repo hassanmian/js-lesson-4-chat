@@ -1,10 +1,14 @@
 import React from 'react'
+import { useContext } from 'react'
+import { ChatRoomContext } from '../contexts/ChatRoomContext'
 
-export default function MessageList({ messages }) {
+export default function MessageList() {
+    const {chatRoom, setChatRoom} = useContext(ChatRoomContext)
+
     return (
         <ul className="list-group">
             {
-            messages && Object.entries(messages).reverse().map(item => {
+            chatRoom.messages && Object.entries(chatRoom.messages).reverse().map(item => {
                 const key = item[0]
                 const payload = item[1]
                 return (
