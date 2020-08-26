@@ -8,7 +8,7 @@ export default function MessageList({ messages }) {
                 const key = item[0]
                 const payload = item[1]
                 return (
-                    <li class="list-group-item" key={key}>
+                    <li className="list-group-item" key={key}>
                         <p>
                             {payload.message}
                         </p>
